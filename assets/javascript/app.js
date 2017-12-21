@@ -1,4 +1,4 @@
-
+// 1. Initialize Firebase
 var config = {
   apiKey: "AIzaSyAE8_wJwHAVbMphnFs6N7FM2aXewtLdxJo",
   authDomain: "train-tracker-9c47b.firebaseapp.com",
@@ -11,7 +11,8 @@ firebase.initializeApp(config);
 
 var database = firebase.database();
 console.log(database);
-// 2. Button for adding trains
+
+//2. Button for adding trains
 $("#add-train-btn").on("click", function (event) {
   event.preventDefault();
 
@@ -39,7 +40,7 @@ $("#add-train-btn").on("click", function (event) {
   console.log(trainFrequency);
 
   // Alert
-  alert("Train successfully added");
+  // alert("Train successfully added");
 
   // Clears all of the text-boxes
   $("#train-name-input").val("");
@@ -66,7 +67,38 @@ $("#add-train-btn").on("click", function (event) {
   console.log(trainTime);
   console.log(trainFrequency);
 
-  $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td></tr>")
+
+  // Assumptions
+  var tFrequency = trainFrequency;
+
+  // Time is 5:30 AM
+  var firstTime = "05:30";
+
+  // First Time (pushed back 1 year to make sure it comes before current time)
+  var firstTimeConverted = moment(firstTime, "hh:mm").subtract(1, "years");
+  console.log(firstTimeConverted);
+
+  // Current Time
+  var currentTime = moment();
+  console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm"));
+
+  // Difference between the times
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  console.log("DIFFERENCE IN TIME: " + diffTime);
+
+  // Time apart (remainder)
+  var tRemainder = diffTime % tFrequency;
+  console.log(tRemainder);
+
+  // Minute Until Train
+  var tMinutesTillTrain = tFrequency - tRemainder;
+  console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
+
+  // Next Train
+  var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+  console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm"));
+
+  $("#train-table > tbody").append("<tr><td>" + trainName + "</td><td>" + trainDestination + "</td><td>" + trainFrequency + "</td><td>" + moment(nextTrain).format("hh:mm") + "</td><td>" + tMinutesTillTrain + "</td></tr>")
 
 
 
